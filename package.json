@@ -1,0 +1,25 @@
+{
+  "name": "@async-util/fetch",
+  "version": "0.3.0",
+  "description": "A super lightweight lib for parsing ReadableStream which is the type of Response.body of fetch api.",
+  "main": "index.mjs",
+  "types": "index.d.mts",
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/async-util/fetch"
+  },
+  "keywords": [
+    "fetch",
+    "stream",
+    "parser"
+  ],
+  "author": "Tal (talrasha007@gmail.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/async-util/fetch/issues"
+  },
+  "homepage": "https://github.com/async-util/fetch#readme"
+}

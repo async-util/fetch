@@ -1,0 +1,6 @@
+{
+  "name": "@async-util/fetch-example",
+  "dependencies": {
+    "@async-util/fetch": "file:.."
+  }
+}
