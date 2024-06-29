@@ -5,7 +5,7 @@ export interface Parser {
   chuncks(): AsyncIterableIterator<Uint8Array>;
   lines(): AsyncIterableIterator<String>;
   json(): AsyncIterableIterator<Object>;
-  sse(isJsonData: Boolean): AsyncIterableIterator<Object>;
+  sse<T=Object>(isJsonData: Boolean): AsyncIterableIterator<T>;
 }
 
 export function fetchParser(url: RequestInfo | URL | String, opts?: RequestInit | undefined): Promise<Parser>;
