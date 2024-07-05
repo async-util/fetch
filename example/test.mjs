@@ -31,7 +31,12 @@ import { fetchParser } from '@async-util/fetch';
 
   console.log('==================== Fetch sse json ==================== ')
   parser = await fetchParser('https://hello-sse.talrasha007.workers.dev/');
+  let cnt = 0;
   for await (const event of parser.sse(true)) {
     console.log('event:', event);
+    if (cnt++ > 3) {
+      console.log('cnt > 3, Canceling...');
+      await parser.cancel();
+    }
   }
 })();

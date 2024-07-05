@@ -1,20 +1,19 @@
 
 class Parser {
   constructor(readableStream) {
-    this._readable = readableStream;
+    this._reader = readableStream.getReader();
   }
 
   cancel() {
-    return this._readable.cancel();
+    return this._reader.cancel();
   }
 
   async *chuncks() {
-    const reader = this._readable.getReader();
     while (true) {
-      const { done, value } = await reader.read();
+      const { done, value } = await this._reader.read().catch(() => ({ done: true }));
+      
+      if (value) yield value;
       if (done) break;
-
-      yield value;
     }
   }
 
