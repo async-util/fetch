@@ -1,6 +1,15 @@
+export interface SSEData<T> {
+  data?: T;
+  event?: string;
+  id?: string;
+
+  [index: string]: any;
+}
 
 class Parser {
-  constructor(readableStream) {
+  private _reader: ReadableStreamDefaultReader<Uint8Array>;
+  
+  constructor(readableStream: ReadableStream<Uint8Array>) {
     this._reader = readableStream.getReader();
   }
 
@@ -10,7 +19,7 @@ class Parser {
 
   async *chuncks() {
     while (true) {
-      const { done, value } = await this._reader.read().catch(() => ({ done: true }));
+      const { done, value } = await this._reader.read().catch(() => ({ done: true, value: undefined }));
       
       if (value) yield value;
       if (done) break;
@@ -24,7 +33,7 @@ class Parser {
     for await (const chunk of this.chuncks()) {
       const text = rest + decoder.decode(chunk);
       const lines = text.split('\n');
-      rest = lines.pop();
+      rest = lines.pop() || '';
 
       for (const line of lines) yield line;
     }
@@ -32,14 +41,14 @@ class Parser {
     if (rest) yield rest;
   }
 
-  async *json() {
+  async *json<T = any>() {
     for await (const line of this.lines()) {
-      if (line.trim()) yield JSON.parse(line);
+      if (line.trim()) yield JSON.parse(line) as T;
     }
   }
 
-  async *sse(isJsonData = false) {
-    let current = null;
+  async *sse<T = any>(isJsonData = false) {
+    let current: SSEData<T> | null = null;
     for await (const line of this.lines()) {
       if (!line) {
         if (current) {
@@ -72,11 +81,11 @@ class Parser {
   }
 }
 
-async function fetchParser(url, opts) {
+async function fetchParser(url: string | URL | globalThis.Request, opts?: RequestInit) {
   const resp = await fetch(url, opts);
   if (!resp.ok) throw new Error(`Fetch failed: ${resp.status} ${resp.statusText}`);
 
-  return new Parser(resp.body);
+  return new Parser(resp.body!);
 }
 
 export default fetchParser;

@@ -2,8 +2,11 @@
   "name": "@async-util/fetch",
   "version": "0.4.0",
   "description": "A super lightweight lib for parsing ReadableStream which is the type of Response.body of fetch api.",
-  "main": "index.mjs",
-  "types": "index.d.mts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "directories": {
     "example": "example"
   },
@@ -21,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/async-util/fetch/issues"
   },
-  "homepage": "https://github.com/async-util/fetch#readme"
+  "homepage": "https://github.com/async-util/fetch#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
 }
