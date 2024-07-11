@@ -1,6 +1,6 @@
 {
   "name": "@async-util/fetch",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A super lightweight lib for parsing ReadableStream which is the type of Response.body of fetch api.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
