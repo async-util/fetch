@@ -10,7 +10,7 @@ class Parser {
   private _reader: ReadableStreamDefaultReader<Uint8Array>;
   public lastError: any;
   
-  constructor(readableStream: ReadableStream<Uint8Array>, private timeout = 120) {
+  constructor(readableStream: ReadableStream<Uint8Array>, private timeout = 120 * 1000) {
     this._reader = readableStream.getReader();
   }
 
@@ -32,7 +32,7 @@ class Parser {
             this.lastError = new Error('Timeout');
             resolve({ done: true, value: undefined });
             this.cancel().catch(() => { });
-          }, this.timeout * 1000)
+          }, this.timeout)
         )
       ]);
 
@@ -98,11 +98,15 @@ class Parser {
   }
 }
 
-async function fetchParser(url: string | URL | globalThis.Request, opts?: RequestInit) {
+interface fpOpt extends RequestInit {
+  timeout?: number;
+}
+
+async function fetchParser(url: string | URL | globalThis.Request, opts?: fpOpt) {
   const resp = await fetch(url, opts);
   if (!resp.ok) throw new Error(`Fetch failed: ${resp.status} ${resp.statusText}`);
 
-  return new Parser(resp.body!);
+  return new Parser(resp.body!, opts?.timeout);
 }
 
 export default fetchParser;
