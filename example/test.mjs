@@ -11,6 +11,15 @@ import { fetchParser } from '@async-util/fetch';
     console.log(chunk);
   }
 
+  console.log('==================== Timeout ==================== ')
+  parser = await fetchParser('https://hello-sse.talrasha007.workers.dev/', { timeout: 200 });
+  for await (const chunk of parser.chuncks()) {
+    // Should not print anything.
+    console.log(chunk);
+  }
+
+  console.log('Parser.lastError:', parser.lastError.toString());
+
   console.log('==================== Fetch chuncks ==================== ')
   parser = await fetchParser('https://hello-sse.talrasha007.workers.dev/');
   for await (const chunk of parser.chuncks()) {
