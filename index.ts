@@ -8,8 +8,9 @@ export interface SSEData<T> {
 
 class Parser {
   private _reader: ReadableStreamDefaultReader<Uint8Array>;
+  public lastError: any;
   
-  constructor(readableStream: ReadableStream<Uint8Array>) {
+  constructor(readableStream: ReadableStream<Uint8Array>, private timeout = 120) {
     this._reader = readableStream.getReader();
   }
 
@@ -18,9 +19,25 @@ class Parser {
   }
 
   async *chuncks() {
+    let lastTimeout: NodeJS.Timeout | undefined;
+
     while (true) {
-      const { done, value } = await this._reader.read().catch(() => ({ done: true, value: undefined }));
-      
+      const { done, value } = await Promise.race([
+        this._reader.read().catch((e) => {
+          this.lastError = e;
+          return { done: true, value: undefined };
+        }),
+        new Promise<{ done: boolean, value: Uint8Array | undefined }>((resolve) =>
+          lastTimeout = setTimeout(() => {
+            this.lastError = new Error('Timeout');
+            resolve({ done: true, value: undefined });
+            this.cancel().catch(() => { });
+          }, this.timeout * 1000)
+        )
+      ]);
+
+      clearTimeout(lastTimeout);
+
       if (value) yield value;
       if (done) break;
     }
